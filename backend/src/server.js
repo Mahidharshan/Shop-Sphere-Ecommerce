@@ -19,7 +19,6 @@ const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
   .split(",")
   .map(o => o.trim().replace(/\/$/, ""))
   .filter(Boolean);
-allowedOrigins.push("http://localhost:5173", "http://localhost:5174");
 
 // Allows every Vercel deploy URL of this account (Vercel creates a new URL per deploy).
 const vercelPattern = /^https:\/\/[a-z0-9-]+-mahidharshan\.vercel\.app$/;
