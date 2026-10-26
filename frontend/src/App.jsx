@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 import { api } from "./api";
 
+
 const demoProducts = [
   { _id:"demo-shirt", name:"Everyday Cotton Shirt", category:"Men's Wear", description:"A breathable cotton shirt designed for everyday comfort.", price:799, currency:"INR", sizes:["XS","S","M","L","XL","XXL","XXXL"], stock:30, sellerName:"North Street Apparel", averageRating:4.5, reviewCount:124, images:["https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=900","https://images.unsplash.com/photo-1607345366928-199ea26cfe3e?w=900","https://images.unsplash.com/photo-1620012253295-c15a3e9c6f14?w=900"] },
   { _id:"demo-shoes", name:"Classic White Sneakers", category:"Shoes", description:"Minimal everyday sneakers with a cushioned sole.", price:1499, currency:"INR", sizes:["6","7","8","9","10","11"], stock:22, sellerName:"Stride Studio", averageRating:4.4, reviewCount:89, images:["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900","https://images.unsplash.com/photo-1549298916-b41d501d3772?w=900","https://images.unsplash.com/photo-1495555961986-6d4c1ecb7be3?w=900"] },
@@ -115,7 +116,7 @@ function App() {
   return <>
   <ScrollToTop />
     <header className="topbar">
-      <Link className="brand" to="/"><span className="brand-mark">S</span> shop<span>sphere</span></Link>
+      <Link className="brand" to="/"><img src="./public/logo.png" alt="ShopSphere" className="brand-logo" height="60" width="60" /></Link>
       <div className="header-search"><SearchBox onSearch={q => { navigate("/"); refreshProducts(q); }} /></div>
       <nav className="nav-actions">
         <Link className="cart-link" to="/sell">Sell</Link>
