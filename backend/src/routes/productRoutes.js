@@ -165,4 +165,50 @@ router.delete("/:id", requireAuth, async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+// get reviews
+router.get("/:id/reviews", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id).select("reviews");
+    if (!product) return res.status(404).json({ message: "Product not found" });
+    res.json({ reviews: [...product.reviews].reverse() });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
+// add or update a review (logged-in users only)
+router.post("/:id/reviews", async (req, res) => {
+  try {
+    const rating = Number(req.body.rating) || 0;
+    const comment = (req.body.comment || "").trim().slice(0, 500);
+    if (!rating && !comment) return res.status(400).json({ message: "Add a rating or a comment" });
+    if (rating < 0 || rating > 5) return res.status(400).json({ message: "Invalid rating" });
+
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    const customer = req.customer; // use whatever your auth middleware sets
+    const existing = product.reviews.find(
+      (r) => String(r.customerId) === String(customer._id)
+    );
+    if (existing) {
+      existing.rating = rating;
+      existing.comment = comment;
+    } else {
+      product.reviews.push({ customerId: customer._id, userName: customer.name, rating, comment });
+    }
+
+    const rated = product.reviews.filter((r) => r.rating > 0);
+    product.averageRating = rated.length
+      ? Number((rated.reduce((s, r) => s + r.rating, 0) / rated.length).toFixed(1))
+      : 0;
+    product.reviewCount = product.reviews.length;
+
+    await product.save();
+    res.json({ product, reviews: [...product.reviews].reverse() });
+  } catch (e) {
+    res.status(500).json({ message: e.message });
+  }
+});
+
 export default router;

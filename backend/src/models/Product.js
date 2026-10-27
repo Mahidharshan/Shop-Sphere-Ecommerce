@@ -19,7 +19,16 @@ const productSchema = new mongoose.Schema({
   sellerId: { type: mongoose.Schema.Types.ObjectId, ref: "Customer", default: null, index: true },
   sellerName: { type: String, default: "ShopSphere Marketplace" },
   averageRating: { type: Number, default: 0 },
-  reviewCount: { type: Number, default: 0 }
+  reviewCount: { type: Number, default: 0 },
+    reviews: [
+  {
+    customerId: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" },
+    userName: String,
+    rating: { type: Number, min: 0, max: 5, default: 0 },
+    comment: { type: String, maxlength: 500, default: "" },
+    createdAt: { type: Date, default: Date.now },
+  },
+],
 }, { timestamps: true });
 
 export default mongoose.model("Product", productSchema);
