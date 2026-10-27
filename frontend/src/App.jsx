@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 import { api } from "./api";
+import ProductReview from "./ProductReview";
 
 
 const demoProducts = [
@@ -227,6 +228,12 @@ function ProductPage({ products, onAdd, customer }) {
     {product.sizes?.length > 0 && <div className="size-select"><div><b>{product.category==="Electronics"?"Select option":"Select size"}</b><span>{size || "Choose one"}</span></div><div className="size-options">{product.sizes.map(s=><button className={size===s?"selected":""} key={s} onClick={()=>setSize(s)}>{s}</button>)}</div></div>}
     <div className="delivery-box"><b>↗ Estimated delivery</b><span>{fmtDate(new Date(Date.now()+5*86400000))} · Estimate only</span><small>Enter your full address at checkout to confirm delivery options.</small></div><div className="seller-box"><span>Sold by</span><b>{product.sellerName || "ShopSphere Marketplace"}</b></div>
     <div className="detail-actions"><button className="button button-outline" disabled={!product.stock} onClick={()=>{if(product.sizes?.length&&!size)return alert("Please select a size first.");onAdd(product,size,qty);}}>Add to cart</button><button className="button button-dark" disabled={!product.stock} onClick={buy}>Buy now ↗</button></div><p className="secure-note">♡ Easy browsing · Secure account · Demo checkout</p></div></div>
+    <ProductReview
+  productId={product._id}
+  productName={product.name}
+  canReview={false}
+  onReviewAdded={(p) => p && setProduct(p)}
+/>
   </main>;
 }
 
@@ -380,23 +387,26 @@ function OrderPage({ customer }) {
       <div className="order-detail-layout">
         <div className="cart-items">
           {order.items.map((i, idx) => (
-            <article className="cart-item" key={idx}>
-              <img src={i.image} alt="" />
+            <div key={idx}>
+              <article className="cart-item">
+                <img src={i.image} alt="" />
+                  <div className="cart-item-info">
+                      <h3>{i.productName}</h3>
+                        <p>
+                          Qty {i.quantity}{i.selectedSize ? ` · Size ${i.selectedSize}` : ""}
+                        </p>
+                    </div>
 
-              <div className="cart-item-info">
-                <h3>{i.productName}</h3>
-                <p>
-                  Qty {i.quantity}
-                  {i.selectedSize ? ` · Size ${i.selectedSize}` : ""}
-                </p>
-                <p>
-                  Rating: {i.rating || "Available after delivery"}
-                </p>
-              </div>
+                  <b>{money(i.subtotal)}</b>
+              </article>
 
-              <b>{money(i.subtotal)}</b>
-            </article>
-          ))}
+              <ProductReview
+                productId={String(i.productId?._id || i.productId)}
+                productName={i.productName}
+                canReview={true}
+              />
+            </div>
+))}
         </div>
 
         <aside className="summary-card">
@@ -428,6 +438,7 @@ function OrderPage({ customer }) {
           </p>
         </aside>
       </div>
+   
     </main>
   );
 }

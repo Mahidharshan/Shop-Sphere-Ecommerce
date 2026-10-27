@@ -40,3 +40,19 @@
 .stock-warning{color:#a3392d!important;margin-top:8px}
 @media(max-width:900px){.sell-layout{grid-template-columns:1fr}}
 @media(max-width:650px){.my-product-edit{grid-template-columns:1fr 1fr}.my-product-actions{grid-column:1/-1}}
+
+.review-box{margin-top:20px;padding:16px;border:1px solid var(--line, #ddd);border-radius:10px;background:#fff}
+.review-avg{font-size:1.2em;font-weight:600;margin:4px 0 12px}
+.review-avg span{font-size:0.8em;font-weight:400;color:#666}
+.stars{display:flex;gap:4px;margin:8px 0}
+.star{background:none;border:none;font-size:28px;color:#ccc;cursor:pointer;padding:0}
+.star.on{color:#f5b301}
+.review-form textarea{width:100%;min-height:80px;border:1px solid #ccc;border-radius:8px;padding:10px;font:inherit;font-size:14px;box-sizing:border-box}
+.review-actions{display:flex;gap:8px;margin-top:8px}
+.review-actions button{border:none;border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer;background:#222;color:#fff}
+.review-actions .ghost{background:#fff;color:#222;border:1px solid #ccc}
+.review-list{margin:16px 0 0;list-style:none;padding:0}
+.review-list li{border-top:1px solid #eee;padding:12px 0}
+.review-stars{color:#f5a623}
+.review-thanks{color:green}
+.review-empty{color:#777}
