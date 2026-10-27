@@ -138,9 +138,11 @@ function App() {
       <Route path="/orders" element={<OrdersPage customer={customer} />} />
       <Route path="/order/:id" element={<OrderPage customer={customer} />} />
       <Route path="/about" element={<About />} />
+      <Route path="/terms" element={<Tems />} />
+      <Route path="/privacy" element={<Privacy />} />
       <Route path="*" element={<main className="page"><h2>Page not found</h2><Link to="/">Back to home</Link></main>} />
     </Routes>
-    <footer><div className="footer-brand">shopsphere</div><p>Good finds for everyday life.</p><div className="footer-links"><Link to="/about">About</Link><a href="mailto:mahidharshans007@gmail.com">Contact</a><span>Shipping & returns</span><span>Privacy</span><span>Terms</span></div><small>© {new Date().getFullYear()} ShopSphere. Demo storefront.</small></footer>
+    <footer><div className="footer-brand">shopsphere</div><p>Good finds for everyday life.</p><div className="footer-links"><Link to="/about">About</Link><a href="mailto:mahidharshans007@gmail.com">Contact</a><span>Shipping & returns</span><Link to="/terms">Terms</Link><Link to="/privacy">Privacy</Link></div><small>© {new Date().getFullYear()} ShopSphere. Demo storefront.</small></footer>
     {toast && <div className="toast" role="status">{toast}</div>}
   </>;
 }
@@ -574,6 +576,167 @@ function MyProductRow({ product, onChanged, setToast }) {
 
 function About() {
   return <main className="page about-page"><div className="eyebrow">A LITTLE ABOUT US</div><h1>Good things should be<br/><em>easy to find.</em></h1><p>ShopSphere is a demo shopping experience built around discovering useful, thoughtful products without the fuss. Browse freely, find something you love, and keep your shopping details in one place when you sign in.</p><Link className="button button-dark" to="/">Explore the collection ↗</Link></main>;
+}
+function Tems() {
+  return <main className="page about-page"><div className="eyebrow">TERMS OF SERVICE</div><h1>Terms of <em>Service.</em></h1><p>
+    <h2>Terms and Conditions</h2> 
+<h3>1. Acceptance of Terms</h3>
+
+By accessing or using [Project Name], you agree to be bound by these Terms and our Privacy Policy. If you do not agree, please do not use the service.
+<br />
+<h3>2. Eligibility</h3>
+<br />
+You must be at least [18] years old, or have the consent of a parent or guardian, and be legally able to enter into a binding agreement.
+<br />
+<h3>3. Your Account</h3>
+You must provide accurate, current information.<br />
+You are responsible for keeping your login details confidential and for all activity under your account.<br />
+Notify us immediately of any unauthorised use.<br/>  
+
+<h3>4. Acceptable Use</h3>  
+<br />  
+You agree not to:
+<br />
+Break any law or infringe anyone’s rights.
+Upload harmful, abusive, defamatory, or unlawful content, or malware.
+Attempt to hack, overload, scrape, reverse engineer, or disrupt the service.
+Impersonate others or misrepresent your affiliation.
+Use the service to send spam or unsolicited promotions.
+
+We may suspend or terminate accounts that violate these rules.
+
+<h3>5. Intellectual Property</h3>
+
+All software, design, text, logos, and other materials in [Project Name] are owned by [Operator] or its licensors and protected by intellectual property laws. We grant you a limited, non-exclusive, non-transferable, revocable licence to use the service for its intended purpose. You may not copy, modify, distribute, or create derivative works without written permission.
+
+<h3>6. User Content</h3>
+
+You retain ownership of content you submit. By submitting it, you grant us a worldwide, non-exclusive, royalty-free licence to host, store, display, and process it solely to operate and improve the service. You confirm that you have the rights to submit it and that it does not violate any law or third-party right.
+
+<h3>7. Payments and Refunds (if applicable)</h3>
+
+Fees, billing cycles, taxes, and refund terms are as stated at the time of purchase. [Example: “Fees are non-refundable except where required by law.”]
+
+<h3>8. Third-Party Services</h3>
+
+The service may integrate third-party tools. Your use of them is governed by their own terms, and we are not responsible for them.
+
+<h3>9. Disclaimer of Warranties</h3>
+
+The service is provided “as is” and “as available”, without warranties of any kind, express or implied, including fitness for a particular purpose, accuracy, or uninterrupted availability.
+
+<h3>10. Limitation of Liability</h3>
+
+To the fullest extent permitted by law, [Operator] is not liable for any indirect, incidental, special, or consequential damages, or loss of data, profits, or goodwill arising from your use of the service. Our total liability for any claim is limited to the amount you paid us in the [12] months before the claim, or [INR 1,000] if you paid nothing.
+
+<h3>11. Indemnification</h3>
+
+You agree to indemnify and hold harmless [Operator] from claims, damages, and expenses (including reasonable legal fees) arising from your breach of these Terms or misuse of the service.
+
+<h3>12. Termination</h3>
+
+You may stop using the service or delete your account at any time. We may suspend or terminate your access, with or without notice, if you violate these Terms or if required by law. Clauses that by nature should survive termination (intellectual property, disclaimers, liability, governing law) will continue to apply.
+
+<h3>13. Changes to the Service and Terms</h3>
+
+We may modify or discontinue features, and may update these Terms. Continued use after changes take effect means you accept them. We will notify you of material changes.
+
+<h3>14. Governing Law and Dispute Resolution</h3>
+
+These Terms are governed by the laws of India. Disputes will first be attempted to be resolved amicably; failing that, they are subject to the exclusive jurisdiction of the courts at [City], Tamil Nadu [or arbitration under the Arbitration and Conciliation Act, 1996, seated in [City]].
+
+<h3>15. General</h3>
+Entire agreement: These Terms and the Privacy Policy form the whole agreement between you and us.
+Severability: If any provision is unenforceable, the rest remains in effect.
+No waiver: Failure to enforce a right is not a waiver of it.
+Assignment: You may not transfer your rights without our consent.
+
+<h3>16. Contact Us</h3>
+
+Mahidharshan S S
+Email: mahidharshan09@gmail.com
+Address: Tiruchengode, Namakkal, Tamil Nadu, India
+</p><Link className="button button-dark" to="/">Back to home ↗</Link></main>;
+}
+function Privacy() {
+  return <main className="page about-page"><div className="eyebrow">PRIVACY POLICY</div><h1>Your <em>privacy.</em></h1><p>
+  <h1>Privacy Policy</h1>
+
+Project: ShopSphere
+Operator: Astroblock Technologies Pvt. Ltd.
+Contact: mahidharshan09@gmail.com
+Effective date: [DD Month YYYY]
+
+<h3>1. Introduction</h3>
+
+ShopSphere respects your privacy. This policy explains what personal information we collect, why we collect it, how we use and protect it, and the choices you have. By using ShopSphere, you agree to this policy.
+
+<h3>2. Information We Collect</h3>
+Information you give us: name, email address, phone number, account credentials, and any content you submit.
+Information collected automatically: device type, browser, IP address, pages visited, and usage logs.
+Cookies and similar technologies: used to keep you signed in, remember preferences, and understand how the service is used.
+Information from third parties: such as sign-in providers (Google, etc.), if applicable.
+
+We do not knowingly collect sensitive information (such as financial or health data) unless it is essential to the service and you have clearly consented.
+
+<h3>3. How We Use Your Information</h3>
+To provide, maintain, and improve the service.
+To create and manage your account.
+To communicate with you about updates, support, and security.
+To detect and prevent fraud, abuse, and security incidents.
+To comply with legal obligations.
+
+We use your information only for the purposes stated here, or with your consent.
+
+<h3>4. Sharing of Information</h3>
+
+We do not sell your personal information. We may share it only with:
+
+Service providers (hosting, analytics, email, payments) who process data on our behalf under confidentiality obligations.
+Legal authorities, when required by law or to protect rights and safety.
+A successor, in case of a merger, acquisition, or sale of the project, with notice to you.
+<h3>5. Data Retention</h3>
+
+We keep your information only as long as needed for the purposes above or as required by law. When you delete your account, we delete or anonymize your data within [30] days, except where we must retain it legally.
+
+<h3>6. Data Security</h3>
+
+We use reasonable technical and organisational measures, such as encryption in transit, access controls, and regular reviews, to protect your data. No system is completely secure, so we cannot guarantee absolute security. If a breach affecting you occurs, we will notify you and the relevant authorities as required by law.
+
+<h3>7. Your Rights</h3>
+
+Subject to applicable law (including India’s Digital Personal Data Protection Act, 2023, and, where relevant, GDPR), you may:
+
+Access the personal data we hold about you.
+Correct inaccurate or incomplete data.
+Request deletion of your data.
+Withdraw consent at any time.
+Nominate another person to exercise your rights if you are unable to.
+Raise a grievance with us, and escalate to the relevant data protection authority if unresolved.
+
+To exercise these rights, contact us at [email address]. We will respond within [30] days.
+
+<h3>8. Children’s Privacy</h3>
+
+ShopSphere is not intended for children under [18] years. We do not knowingly collect data from children without verifiable parental consent. If you believe a child has provided us data, contact us and we will delete it.
+
+<h3>9. Third-Party Links and Services</h3>
+
+The service may link to third-party sites or use third-party tools. We are not responsible for their privacy practices; please review their policies.
+
+<h3>10. International Transfers</h3>
+
+Your data may be stored or processed in [country/region]. Where data is transferred across borders, we take steps to ensure appropriate protection.
+
+<h3>11. Changes to This Policy</h3>
+
+We may update this policy from time to time. We will post the new version with an updated effective date and notify you of significant changes.
+
+<h3>12. Grievance Officer / Contact</h3>
+
+Mahidharshan, Grievance Officer
+Email: mahidharshan09@gmail.com
+Address:  Tiruchengode,Namakkal</p><Link className="button button-dark" to="/">Back to home ↗</Link></main>;
 }
 
 export default App;
