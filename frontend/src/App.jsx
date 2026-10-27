@@ -118,9 +118,6 @@ function App() {
   <ScrollToTop />
     <header className="topbar">
       <Link className="brand" to="/"><img src="/logo.png" alt="ShopSphere" className="brand-logo" height="60" width="60" /></Link>
-
-      <Link className="brand" to="/"><img src="/logo.png" alt="ShopSphere" className="brand-logo" height="60" width="60" /></Link>
-
       <div className="header-search"><SearchBox onSearch={q => { navigate("/"); refreshProducts(q); }} /></div>
       <nav className="nav-actions">
         <Link className="cart-link" to="/sell">Sell</Link>
