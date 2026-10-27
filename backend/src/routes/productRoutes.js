@@ -63,7 +63,7 @@ router.get("/mine", requireAuth, async (req, res, next) => {
 
 router.get("/:id", async (req, res, next) => {
   try {
-    if (!mongoose.isValidObjectId(req.params.id)) return res.status(404).json({ message: "Product not found." });
+    if (!mongoose.isValidObjectId(req.params.id)) return res.status(400).json({ message: "Invalid product ID" });
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ message: "Product not found." });
     res.json({ product });
@@ -177,17 +177,23 @@ router.get("/:id/reviews", async (req, res) => {
 });
 
 // add or update a review (logged-in users only)
-router.post("/:id/reviews", async (req, res) => {
+router.post("/:id/reviews", requireAuth, async (req, res, next) => {
   try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(400).json({ message: "Invalid product ID" });
+    }
+
     const rating = Number(req.body.rating) || 0;
-    const comment = (req.body.comment || "").trim().slice(0, 500);
+    const comment = String(req.body.comment || "").trim().slice(0, 500);
     if (!rating && !comment) return res.status(400).json({ message: "Add a rating or a comment" });
     if (rating < 0 || rating > 5) return res.status(400).json({ message: "Invalid rating" });
+
+    const customer = await Customer.findById(req.session.customerId);
+    if (!customer) return res.status(401).json({ message: "Please log in to continue." });
 
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ message: "Product not found" });
 
-    const customer = req.customer; // use whatever your auth middleware sets
     const existing = product.reviews.find(
       (r) => String(r.customerId) === String(customer._id)
     );
@@ -206,9 +212,6 @@ router.post("/:id/reviews", async (req, res) => {
 
     await product.save();
     res.json({ product, reviews: [...product.reviews].reverse() });
-  } catch (e) {
-    res.status(500).json({ message: e.message });
-  }
+  } catch (e) { next(e); }
 });
-
 export default router;

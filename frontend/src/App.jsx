@@ -117,7 +117,7 @@ function App() {
   return <>
   <ScrollToTop />
     <header className="topbar">
-      <Link className="brand" to="/"><img src="./public/icon.jpeg" alt="ShopSphere" className="brand-logo" height="60" width="60" /></Link>
+      <Link className="brand" to="/"><img src="./icon.jpeg" alt="ShopSphere" className="brand-logo" height="60" width="60" /></Link>
       <div className="header-search"><SearchBox onSearch={q => { navigate("/"); refreshProducts(q); }} /></div>
       <nav className="nav-actions">
         <Link className="cart-link" to="/sell">Sell</Link>
@@ -231,7 +231,7 @@ function ProductPage({ products, onAdd, customer }) {
     <ProductReview
   productId={product._id}
   productName={product.name}
-  canReview={false}
+  canReview={!!customer}
   onReviewAdded={(p) => p && setProduct(p)}
 />
   </main>;
