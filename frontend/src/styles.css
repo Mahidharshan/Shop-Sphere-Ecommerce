@@ -55,9 +55,6 @@
 .review-list li{border-top:1px solid #eee;padding:12px 0}
 .review-stars{color:#f5a623}
 .review-thanks{color:green}
-<<<<<<< HEAD
-.review-empty{color:#777}
-=======
 .review-empty{color:#777}
 /* ---------- Payment method choice ---------- */
 .pay-title{margin-top:8px}
@@ -68,4 +65,3 @@
 .pay-option span{display:flex;flex-direction:column;gap:3px}
 .pay-option b{font-size:12px}
 .pay-option small{font-size:10px;color:var(--muted)}
->>>>>>> 1d03b75 (All Done)
