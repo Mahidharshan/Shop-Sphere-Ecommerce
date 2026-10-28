@@ -1,10 +1,8 @@
 import { Router } from "express";
 import Customer from "../models/Customer.js";
 import { requireAuth } from "../middleware/authenticate.js";
-<<<<<<< HEAD
-=======
 import { isAdminEmail } from "../services/admin.js";
->>>>>>> 1d03b75 (All Done)
+
 
 const router = Router();
 
@@ -15,11 +13,9 @@ router.get("/me", requireAuth, async (req, res, next) => {
     res.json({ customer: {
       _id: customer._id, name: customer.name, email: customer.email,
       photo: customer.photo, bio: customer.bio, phone: customer.phone,
-<<<<<<< HEAD
-      addresses: customer.addresses
-=======
+
+      addresses: customer.addresses,
       addresses: customer.addresses, isAdmin: isAdminEmail(customer.email)
->>>>>>> 1d03b75 (All Done)
     }});
   } catch (err) { next(err); }
 });
@@ -36,11 +32,11 @@ router.patch("/me", requireAuth, async (req, res, next) => {
     res.json({ customer: {
       _id: customer._id, name: customer.name, email: customer.email,
       photo: customer.photo, bio: customer.bio, phone: customer.phone,
-<<<<<<< HEAD
-      addresses: customer.addresses
-=======
-      addresses: customer.addresses, isAdmin: isAdminEmail(customer.email)
->>>>>>> 1d03b75 (All Done)
+
+      addresses: customer.addresses,
+      addresses: customer.addresses, 
+      isAdmin: isAdminEmail(customer.email)
+
     }});
   } catch (err) { next(err); }
 });

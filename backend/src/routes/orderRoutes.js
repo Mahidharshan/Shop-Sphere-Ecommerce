@@ -5,10 +5,8 @@ import Product from "../models/Product.js";
 import Order from "../models/Order.js";
 import { requireAuth } from "../middleware/authenticate.js";
 import { releaseStock } from "../services/stock.js";
-<<<<<<< HEAD
-=======
 import { createCashfreeRefund } from "../services/cashfree.js";
->>>>>>> 1d03b75 (All Done)
+
 
 const router = Router();
 router.use(requireAuth);
@@ -126,21 +124,17 @@ router.delete("/:id", async (req, res, next) => {
     if (!CANCELLABLE.includes(order.status)) {
       return res.status(409).json({ message: "This order can no longer be cancelled." });
     }
-<<<<<<< HEAD
+
     if (order.paymentStatus === "Paid") {
       return res.status(409).json({ message: "Paid orders can't be cancelled online yet. Please contact support for a refund." });
-=======
+    }
     // Order statuses are not updated automatically yet, so also stop cancelling once the delivery date has come.
     if (order.estimatedDeliveryAt && Date.now() >= new Date(order.estimatedDeliveryAt).getTime()) {
       return res.status(409).json({ message: "The delivery date has passed, so this order can't be cancelled." });
->>>>>>> 1d03b75 (All Done)
     }
     if (order.paymentStatus === "Pending" && order.gatewayOrderId) {
       return res.status(409).json({ message: "Payment is still in progress. An unpaid order is cancelled automatically." });
     }
-<<<<<<< HEAD
-    // One atomic step, so stock is given back only once.
-=======
 
     // Paid online order: cancel and refund.
     if (order.paymentStatus === "Paid" && order.gatewayOrderId) {
@@ -170,7 +164,7 @@ router.delete("/:id", async (req, res, next) => {
     }
 
     // Cash on delivery (or demo) order: just cancel it and give the stock back.
->>>>>>> 1d03b75 (All Done)
+
     const cancelled = await Order.findOneAndUpdate(
       { _id: order._id, customerId: order.customerId, status: { $in: CANCELLABLE }, paymentStatus: { $ne: "Paid" } },
       { $set: { status: "Cancelled" } },
@@ -182,8 +176,6 @@ router.delete("/:id", async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-<<<<<<< HEAD
-=======
 // ---------- Returns: only after delivery, and only within 7 days of receiving the order ----------
 export const RETURN_WINDOW_DAYS = 7;
 
@@ -209,8 +201,6 @@ router.post("/:id/return", async (req, res, next) => {
     );
     if (!updated) return res.status(409).json({ message: "A return was already requested for this order." });
     res.json({ message: "Return requested. We will contact you about pickup and your refund.", order: updated });
-  } catch (err) { next(err); }
-});
+  } catch (err) { next(err); }});
 
->>>>>>> 1d03b75 (All Done)
 export default router;
