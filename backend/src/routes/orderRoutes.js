@@ -4,16 +4,10 @@ import Cart from "../models/Cart.js";
 import Product from "../models/Product.js";
 import Order from "../models/Order.js";
 import { requireAuth } from "../middleware/authenticate.js";
+import { releaseStock } from "../services/stock.js";
 
 const router = Router();
 router.use(requireAuth);
-
-// Undo stock reservations (used when an order can't be completed).
-async function releaseStock(items) {
-  await Promise.all(items.map(i =>
-    Product.updateOne({ _id: i.productId }, { $inc: { stock: i.quantity, soldQty: -i.quantity } })
-  ));
-}
 
 router.get("/", async (req, res, next) => {
   try {
@@ -33,6 +27,10 @@ router.get("/:id", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
+    // Demo orders are free (no payment). Real orders go through /api/payments/checkout.
+    if (process.env.ALLOW_DEMO_CHECKOUT !== "true") {
+      return res.status(403).json({ message: "Please pay online to place an order." });
+    }
     const { deliveryAddress, items: requestedItems } = req.body;
     if (!deliveryAddress?.street || !deliveryAddress?.city || !deliveryAddress?.postalCode || !deliveryAddress?.country) {
       return res.status(400).json({ message: "Complete delivery address is required." });
@@ -113,17 +111,33 @@ router.post("/", async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-router.delete("/:id", async (req, res) => {
+const CANCELLABLE = ["OrderPlaced", "Processing"];
+
+router.delete("/:id", async (req, res, next) => {
   try {
-    const deletedOrder = await Order.findByIdAndDelete(req.params.id);
-    if (!deletedOrder) {
-      return res.status(404).json({message: "Order not found"});
+    if (!mongoose.isValidObjectId(req.params.id)) return res.status(404).json({ message: "Order not found." });
+    // Only the owner can cancel, and only their own order.
+    const order = await Order.findOne({ _id: req.params.id, customerId: req.session.customerId });
+    if (!order) return res.status(404).json({ message: "Order not found." });
+    if (!CANCELLABLE.includes(order.status)) {
+      return res.status(409).json({ message: "This order can no longer be cancelled." });
     }
-    res.status(200).json({message: "Order Cancelled successfully"});
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({message: "Failed to delete order"});
-  }
+    if (order.paymentStatus === "Paid") {
+      return res.status(409).json({ message: "Paid orders can't be cancelled online yet. Please contact support for a refund." });
+    }
+    if (order.paymentStatus === "Pending" && order.gatewayOrderId) {
+      return res.status(409).json({ message: "Payment is still in progress. An unpaid order is cancelled automatically." });
+    }
+    // One atomic step, so stock is given back only once.
+    const cancelled = await Order.findOneAndUpdate(
+      { _id: order._id, customerId: order.customerId, status: { $in: CANCELLABLE }, paymentStatus: { $ne: "Paid" } },
+      { $set: { status: "Cancelled" } },
+      { new: true }
+    );
+    if (!cancelled) return res.status(409).json({ message: "This order can no longer be cancelled." });
+    await releaseStock(order.items);
+    res.json({ message: "Order cancelled successfully.", order: cancelled });
+  } catch (err) { next(err); }
 });
 
 export default router;

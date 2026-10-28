@@ -24,6 +24,9 @@ const orderSchema = new mongoose.Schema({
   currency: { type: String, default: "INR" },
   status: { type: String, enum: ["OrderPlaced","Processing", "Shipped", "Out for Delivery", "Delivered", "Cancelled"], default: "OrderPlaced" },
   paymentStatus: { type: String, enum: ["Demo - not paid", "Pending", "Paid", "Failed"], default: "Demo - not paid" },
+  paymentMethod: { type: String, default: "Demo" },
+  gatewayOrderId: { type: String, index: true }, // Cashfree order id (ss_<order id>)
+  paidAt: { type: Date, default: null },
   orderedAt: { type: Date, default: Date.now },
   estimatedDeliveryAt: Date,
   deliveredAt: { type: Date, default: null }

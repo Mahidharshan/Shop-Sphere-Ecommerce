@@ -9,6 +9,8 @@ import productRoutes from "./routes/productRoutes.js";
 import customerRoutes from "./routes/customerRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import paymentRoutes, { reconcilePendingPayments } from "./routes/paymentRoutes.js";
+import { cashfreeConfigured } from "./services/cashfree.js";
 import { uploadDir } from "./middleware/upload.js";
 
 const app = express();
@@ -65,6 +67,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/payments", paymentRoutes);
 
 app.use((err, _req, res, _next) => {
   console.error(err);
@@ -76,6 +79,12 @@ app.use((err, _req, res, _next) => {
 
 connectDatabase().then(() => {
   app.listen(port, () => console.log(`ShopSphere API running at http://localhost:${port}`));
+  if (cashfreeConfigured()) {
+    // Every 5 minutes: settle payments the customer never came back to confirm.
+    setInterval(() => reconcilePendingPayments().catch(err => console.error(err.message)), 5 * 60 * 1000).unref();
+  } else {
+    console.warn("Cashfree keys are missing: online payment is disabled.");
+  }
 }).catch(err => {
   console.error("Database connection failed:", err.message);
   process.exit(1);

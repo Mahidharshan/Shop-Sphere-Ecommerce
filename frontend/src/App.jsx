@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 import { api } from "./api";
 import ProductReview from "./ProductReview";
+import PaymentStatusPage from "./PaymentStatus";
 
 
 const demoProducts = [
@@ -135,6 +136,7 @@ function App() {
       <Route path="/register" element={<AuthPage mode="register" setCustomer={setCustomer} onDone={loadMe} />} />
       <Route path="/cart" element={<CartPage cart={cart} changeQuantity={changeQuantity} removeItem={removeItem} customer={customer} navigate={navigate} setToast={setToast} />} />
       <Route path="/checkout" element={<CheckoutPage cart={cart} customer={customer} setCart={setCart} setToast={setToast} navigate={navigate} onOrderPlaced={() => refreshProducts()} />} />
+      <Route path="/payment-status" element={<PaymentStatusPage setCart={setCart} onPaid={() => refreshProducts()} />} />
       <Route path="/sell" element={<SellPage customer={customer} setToast={setToast} refreshProducts={refreshProducts} />} />
       <Route path="/profile" element={<ProfilePage customer={customer} setCustomer={setCustomer} signOut={signOut} />} />
       <Route path="/orders" element={<OrdersPage customer={customer} />} />
@@ -280,27 +282,27 @@ function CartPage({ cart, changeQuantity, removeItem, customer, navigate, setToa
   </main>;
 }
 
-function CheckoutPage({ cart, customer, setCart, setToast, navigate, onOrderPlaced }) {
+function CheckoutPage({ cart, customer, navigate }) {
   const [address,setAddress] = useState({street:"",city:"",state:"Tamil Nadu",postalCode:"",country:"India"});
+  const [phone,setPhone] = useState(customer?.phone || "");
   const [busy,setBusy] = useState(false);
   const [error,setError] = useState("");
-  const [placed,setPlaced] = useState(null);
   const subtotal=cart.reduce((s,i)=>s+(i.product?.price||0)*i.quantity,0);
   const fee=subtotal===0||subtotal>=2000?0:50;
   useEffect(()=>{ if(!customer) navigate("/login",{state:{from:"/checkout"}}); },[customer,navigate]);
+  useEffect(()=>{ if(customer?.phone) setPhone(p=>p||customer.phone); },[customer]);
   const submit = async e => {
     e.preventDefault(); if(!cart.length)return setError("Your cart is empty.");
-    if(!window.confirm(`Confirm your demo order for ${money(subtotal+fee)}? No payment will be collected.`))return;
-    setBusy(true);setError(""); 
+    setBusy(true);setError("");
     try {
       const items=cart.map(i=>({productId:i.productId,quantity:i.quantity,selectedSize:i.selectedSize||""}));
-      const data=await api("/orders",{method:"POST",body:JSON.stringify({deliveryAddress:address,items})});
-      setPlaced(data.order);setCart([]);localStorage.removeItem("shopsphere-guest-cart");onOrderPlaced?.();
-    } catch(e){setError(e.message);}
-    finally{setBusy(false);}
+      const data=await api("/payments/checkout",{method:"POST",body:JSON.stringify({deliveryAddress:address,items,phone})});
+      if(!window.Cashfree) throw new Error("The payment page could not load. Check your internet and try again.");
+      const cashfree=window.Cashfree({mode:data.mode});
+      await cashfree.checkout({paymentSessionId:data.paymentSessionId,redirectTarget:"_self"});
+    } catch(e){setError(e.message);setBusy(false);}
   };
-  if(placed) return <main className="page success-page"><div className="success-mark">✓</div><div className="eyebrow">THAT'S A WRAP</div><h1>Order <em>placed!</em></h1><p>Your demo order has been created successfully. No payment was collected.</p><div className="success-card"><span>Order ID</span><b>{placed._id}</b><span>Order total</span><b>{money(placed.totalAmount)}</b><span>Estimated delivery</span><b>{fmtDate(placed.estimatedDeliveryAt)}</b></div><button className="button button-dark" onClick={()=>navigate(`/order/${placed._id}`)}>View order details ↗</button><button className="text-button" onClick={()=>navigate("/")}>Continue shopping</button></main>;
-  return <main className="page checkout-page"><div className="page-title"><div className="eyebrow">ALMOST YOURS</div><h1>Check <em>out.</em></h1><p>Confirm where your finds should arrive.</p></div><div className="checkout-layout"><form className="address-form" onSubmit={submit}><h2>Delivery address</h2><p>We need a complete address to estimate delivery.</p><label>Street address<input required value={address.street} onChange={e=>setAddress({...address,street:e.target.value})} placeholder="House number, street, area"/></label><div className="form-row"><label>City<input required value={address.city} onChange={e=>setAddress({...address,city:e.target.value})} placeholder="City"/></label><label>State<input required value={address.state} onChange={e=>setAddress({...address,state:e.target.value})}/></label></div><div className="form-row"><label>PIN / postal code<input required value={address.postalCode} onChange={e=>setAddress({...address,postalCode:e.target.value})} placeholder="Postal code"/></label><label>Country<input required value={address.country} onChange={e=>setAddress({...address,country:e.target.value})}/></label></div>{error&&<div className="form-error">{error}</div>}<button className="button button-dark full" disabled={busy||!cart.length}>{busy?"Placing order…":`Confirm demo order · ${money(subtotal+fee)}`}</button><small className="demo-warning">Demo checkout only. No real payment is collected.</small></form><aside className="summary-card"><h3>Your order</h3>{cart.map((i,idx)=><div className="checkout-line" key={idx}><img src={i.product?.images?.[0]} alt=""/><span>{i.product?.name} × {i.quantity}{i.selectedSize?` · ${i.selectedSize}`:""}</span><b>{money(i.product?.price*i.quantity)}</b></div>)}<div><span>Subtotal</span><b>{money(subtotal)}</b></div><div><span>Delivery</span><b>{fee?money(fee):"Free"}</b></div><div className="summary-total"><span>Total</span><b>{money(subtotal+fee)}</b></div></aside></div></main>;
+  return <main className="page checkout-page"><div className="page-title"><div className="eyebrow">ALMOST YOURS</div><h1>Check <em>out.</em></h1><p>Confirm where your finds should arrive.</p></div><div className="checkout-layout"><form className="address-form" onSubmit={submit}><h2>Delivery address</h2><p>We need a complete address to estimate delivery.</p><label>Street address<input required value={address.street} onChange={e=>setAddress({...address,street:e.target.value})} placeholder="House number, street, area"/></label><div className="form-row"><label>City<input required value={address.city} onChange={e=>setAddress({...address,city:e.target.value})} placeholder="City"/></label><label>State<input required value={address.state} onChange={e=>setAddress({...address,state:e.target.value})}/></label></div><div className="form-row"><label>PIN / postal code<input required value={address.postalCode} onChange={e=>setAddress({...address,postalCode:e.target.value})} placeholder="Postal code"/></label><label>Country<input required value={address.country} onChange={e=>setAddress({...address,country:e.target.value})}/></label></div><label>Mobile number<input required inputMode="numeric" pattern="[6-9][0-9]{9}" maxLength={10} value={phone} onChange={e=>setPhone(e.target.value.replace(/\D/g,""))} placeholder="10-digit mobile number"/></label>{error&&<div className="form-error">{error}</div>}<button className="button button-dark full" disabled={busy||!cart.length}>{busy?"Opening payment…":`Pay ${money(subtotal+fee)} securely`}</button><small className="demo-warning">You will pay on Cashfree's secure page with UPI, card or net banking.</small></form><aside className="summary-card"><h3>Your order</h3>{cart.map((i,idx)=><div className="checkout-line" key={idx}><img src={i.product?.images?.[0]} alt=""/><span>{i.product?.name} × {i.quantity}{i.selectedSize?` · ${i.selectedSize}`:""}</span><b>{money(i.product?.price*i.quantity)}</b></div>)}<div><span>Subtotal</span><b>{money(subtotal)}</b></div><div><span>Delivery</span><b>{fee?money(fee):"Free"}</b></div><div className="summary-total"><span>Total</span><b>{money(subtotal+fee)}</b></div></aside></div></main>;
 }
 
 function ProfilePage({ customer, setCustomer, signOut }) {
@@ -377,12 +379,14 @@ function OrderPage({ customer }) {
           Placed on {fmtDate(order.orderedAt)} · {order._id}
         </p>
 
-        <button
-          className="button button-dark"
-          onClick={handleCancelOrder}
-        >
-          Cancel Order
-        </button>
+        {["OrderPlaced", "Processing"].includes(order.status) && order.paymentStatus !== "Paid" && !(order.paymentStatus === "Pending" && order.gatewayOrderId) && (
+          <button
+            className="button button-dark"
+            onClick={handleCancelOrder}
+          >
+            Cancel Order
+          </button>
+        )}
       </div>
 
       <div className="order-detail-layout">
