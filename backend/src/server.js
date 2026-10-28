@@ -9,10 +9,10 @@ import productRoutes from "./routes/productRoutes.js";
 import customerRoutes from "./routes/customerRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
-<<<<<<< HEAD
-=======
+
+
 import adminRoutes from "./routes/adminRoutes.js";
->>>>>>> 1d03b75 (All Done)
+
 import paymentRoutes, { reconcilePendingPayments } from "./routes/paymentRoutes.js";
 import { cashfreeConfigured } from "./services/cashfree.js";
 import { uploadDir } from "./middleware/upload.js";
@@ -72,10 +72,7 @@ app.use("/api/customers", customerRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);
-<<<<<<< HEAD
-=======
 app.use("/api/admin", adminRoutes);
->>>>>>> 1d03b75 (All Done)
 
 app.use((err, _req, res, _next) => {
   console.error(err);
