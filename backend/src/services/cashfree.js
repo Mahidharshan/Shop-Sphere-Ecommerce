@@ -33,8 +33,6 @@ export const createCashfreeOrder = body => call("/orders", { method: "POST", bod
 
 // order_status is PAID, ACTIVE (not paid yet), EXPIRED, TERMINATED ...
 export const fetchCashfreeOrder = orderId => call(`/orders/${encodeURIComponent(orderId)}`);
-<<<<<<< HEAD
-=======
 
 // Refund a paid order. refund_id must be unique, so the same refund can never be created twice.
 export async function createCashfreeRefund(orderId, refundId, amount, note) {
@@ -44,4 +42,4 @@ export async function createCashfreeRefund(orderId, refundId, amount, note) {
   });
   return Array.isArray(data) ? data[0] : data;
 }
->>>>>>> 1d03b75 (All Done)
+
