@@ -109,6 +109,21 @@ How it works:
 - `POST /api/payments/verify` asks Cashfree for the real status. Only `PAID` marks the order Paid.
 - Unpaid orders expire after 30 minutes and their stock is released automatically (background check every 5 minutes).
 - `POST /api/orders` (free demo order) is disabled unless `ALLOW_DEMO_CHECKOUT=true`.
+<<<<<<< HEAD
 - Paid orders cannot be cancelled in the app yet (no refund flow). Use the Cashfree dashboard to refund.
 
 Before going live: complete Cashfree activation, switch to `CASHFREE_ENV=production` with live keys, and add a webhook as a second safety net.
+=======
+- Customers can pay online or choose Cash on Delivery (`POST /api/payments/cod`, stock reserved, payment status "Pay on Delivery").
+- Cancelling: COD orders cancel instantly. Paid online orders are cancelled and refunded through Cashfree (`POST /pg/orders/{order_id}/refunds`); stock is returned. Only orders in OrderPlaced or Processing can be cancelled.
+
+Before going live: complete Cashfree activation, switch to `CASHFREE_ENV=production` with live keys, and add a webhook as a second safety net.
+
+## Delivery, returns and the Admin page (v4)
+
+- Set `ADMIN_EMAILS=your-account-email` in `backend/.env` (an account you registered in the app). That account sees an **Admin** link in the top bar.
+- On the Admin page you move each order forward: Processing > Shipped > Out for Delivery > **Delivered**. Marking a COD order Delivered also marks it Paid (cash collected).
+- **Returns:** once an order is Delivered, the customer can request a return for **7 days** from the delivery time (`RETURN_WINDOW_DAYS` in `orderRoutes.js`). After that the button disappears and the server refuses the request.
+- On the Admin page you approve or reject the return. Approving an online order refunds it through Cashfree and returns the items to stock. For COD, approve and then send the refund yourself (bank/UPI) and press **Mark refund sent**.
+- Customers can cancel only before delivery (status OrderPlaced or Processing, and before the estimated delivery date).
+>>>>>>> 1d03b75 (All Done)

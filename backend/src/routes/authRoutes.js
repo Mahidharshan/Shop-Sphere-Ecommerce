@@ -1,6 +1,10 @@
 import { Router } from "express";
 import bcrypt from "bcrypt";
 import Customer from "../models/Customer.js";
+<<<<<<< HEAD
+=======
+import { isAdminEmail } from "../services/admin.js";
+>>>>>>> 1d03b75 (All Done)
 
 const router = Router();
 
@@ -12,7 +16,12 @@ function publicCustomer(customer) {
     photo: customer.photo,
     bio: customer.bio,
     phone: customer.phone,
+<<<<<<< HEAD
     addresses: customer.addresses || []
+=======
+    addresses: customer.addresses || [],
+    isAdmin: isAdminEmail(customer.email)
+>>>>>>> 1d03b75 (All Done)
   };
 }
 

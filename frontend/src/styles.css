@@ -55,4 +55,17 @@
 .review-list li{border-top:1px solid #eee;padding:12px 0}
 .review-stars{color:#f5a623}
 .review-thanks{color:green}
+<<<<<<< HEAD
 .review-empty{color:#777}
+=======
+.review-empty{color:#777}
+/* ---------- Payment method choice ---------- */
+.pay-title{margin-top:8px}
+.pay-options{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.address-form .pay-option{flex-direction:row;align-items:center;gap:12px;border:1px solid #dfe1d8;border-radius:5px;padding:13px 14px;margin:0;font-weight:400;cursor:pointer;background:#fff}
+.address-form .pay-option.on{border-color:var(--ink);background:#f7f8f2}
+.address-form .pay-option input{width:auto;padding:0;accent-color:#20231f}
+.pay-option span{display:flex;flex-direction:column;gap:3px}
+.pay-option b{font-size:12px}
+.pay-option small{font-size:10px;color:var(--muted)}
+>>>>>>> 1d03b75 (All Done)

@@ -3,6 +3,10 @@ import { Link, Route, Routes, useLocation, useNavigate, useParams } from "react-
 import { api } from "./api";
 import ProductReview from "./ProductReview";
 import PaymentStatusPage from "./PaymentStatus";
+<<<<<<< HEAD
+=======
+import AdminPage from "./AdminPage";
+>>>>>>> 1d03b75 (All Done)
 
 
 const demoProducts = [
@@ -123,6 +127,10 @@ function App() {
       <div className="header-search"><SearchBox onSearch={q => { navigate("/"); refreshProducts(q); }} /></div>
       <nav className="nav-actions">
         <Link className="cart-link" to="/sell">Sell</Link>
+<<<<<<< HEAD
+=======
+        {customer?.isAdmin && <Link className="cart-link" to="/admin">Admin</Link>}
+>>>>>>> 1d03b75 (All Done)
         <Link className="cart-link" to="/cart">Cart <span className="cart-count">{cartCount}</span></Link>
         {customer ? <Link className="profile-chip" to="/profile"><span className="avatar">{customer.name?.[0]?.toUpperCase() || "U"}</span><span>{customer.name}</span></Link> : <Link className="button button-dark small" to="/login" state={{ from: location.pathname }}>Login</Link>}
       </nav>
@@ -137,6 +145,10 @@ function App() {
       <Route path="/cart" element={<CartPage cart={cart} changeQuantity={changeQuantity} removeItem={removeItem} customer={customer} navigate={navigate} setToast={setToast} />} />
       <Route path="/checkout" element={<CheckoutPage cart={cart} customer={customer} setCart={setCart} setToast={setToast} navigate={navigate} onOrderPlaced={() => refreshProducts()} />} />
       <Route path="/payment-status" element={<PaymentStatusPage setCart={setCart} onPaid={() => refreshProducts()} />} />
+<<<<<<< HEAD
+=======
+      <Route path="/admin" element={<AdminPage customer={customer} />} />
+>>>>>>> 1d03b75 (All Done)
       <Route path="/sell" element={<SellPage customer={customer} setToast={setToast} refreshProducts={refreshProducts} />} />
       <Route path="/profile" element={<ProfilePage customer={customer} setCustomer={setCustomer} signOut={signOut} />} />
       <Route path="/orders" element={<OrdersPage customer={customer} />} />
@@ -282,9 +294,16 @@ function CartPage({ cart, changeQuantity, removeItem, customer, navigate, setToa
   </main>;
 }
 
+<<<<<<< HEAD
 function CheckoutPage({ cart, customer, navigate }) {
   const [address,setAddress] = useState({street:"",city:"",state:"Tamil Nadu",postalCode:"",country:"India"});
   const [phone,setPhone] = useState(customer?.phone || "");
+=======
+function CheckoutPage({ cart, customer, setCart, setToast, navigate, onOrderPlaced }) {
+  const [address,setAddress] = useState({street:"",city:"",state:"Tamil Nadu",postalCode:"",country:"India"});
+  const [phone,setPhone] = useState(customer?.phone || "");
+  const [method,setMethod] = useState("online");
+>>>>>>> 1d03b75 (All Done)
   const [busy,setBusy] = useState(false);
   const [error,setError] = useState("");
   const subtotal=cart.reduce((s,i)=>s+(i.product?.price||0)*i.quantity,0);
@@ -296,13 +315,26 @@ function CheckoutPage({ cart, customer, navigate }) {
     setBusy(true);setError("");
     try {
       const items=cart.map(i=>({productId:i.productId,quantity:i.quantity,selectedSize:i.selectedSize||""}));
+<<<<<<< HEAD
+=======
+      if(method==="cod"){
+        const placed=await api("/payments/cod",{method:"POST",body:JSON.stringify({deliveryAddress:address,items,phone})});
+        setCart([]);localStorage.removeItem("shopsphere-guest-cart");onOrderPlaced?.();
+        setToast("Order placed. Pay in cash when it arrives.");navigate(`/order/${placed.order._id}`);
+        return;
+      }
+>>>>>>> 1d03b75 (All Done)
       const data=await api("/payments/checkout",{method:"POST",body:JSON.stringify({deliveryAddress:address,items,phone})});
       if(!window.Cashfree) throw new Error("The payment page could not load. Check your internet and try again.");
       const cashfree=window.Cashfree({mode:data.mode});
       await cashfree.checkout({paymentSessionId:data.paymentSessionId,redirectTarget:"_self"});
     } catch(e){setError(e.message);setBusy(false);}
   };
+<<<<<<< HEAD
   return <main className="page checkout-page"><div className="page-title"><div className="eyebrow">ALMOST YOURS</div><h1>Check <em>out.</em></h1><p>Confirm where your finds should arrive.</p></div><div className="checkout-layout"><form className="address-form" onSubmit={submit}><h2>Delivery address</h2><p>We need a complete address to estimate delivery.</p><label>Street address<input required value={address.street} onChange={e=>setAddress({...address,street:e.target.value})} placeholder="House number, street, area"/></label><div className="form-row"><label>City<input required value={address.city} onChange={e=>setAddress({...address,city:e.target.value})} placeholder="City"/></label><label>State<input required value={address.state} onChange={e=>setAddress({...address,state:e.target.value})}/></label></div><div className="form-row"><label>PIN / postal code<input required value={address.postalCode} onChange={e=>setAddress({...address,postalCode:e.target.value})} placeholder="Postal code"/></label><label>Country<input required value={address.country} onChange={e=>setAddress({...address,country:e.target.value})}/></label></div><label>Mobile number<input required inputMode="numeric" pattern="[6-9][0-9]{9}" maxLength={10} value={phone} onChange={e=>setPhone(e.target.value.replace(/\D/g,""))} placeholder="10-digit mobile number"/></label>{error&&<div className="form-error">{error}</div>}<button className="button button-dark full" disabled={busy||!cart.length}>{busy?"Opening payment…":`Pay ${money(subtotal+fee)} securely`}</button><small className="demo-warning">You will pay on Cashfree's secure page with UPI, card or net banking.</small></form><aside className="summary-card"><h3>Your order</h3>{cart.map((i,idx)=><div className="checkout-line" key={idx}><img src={i.product?.images?.[0]} alt=""/><span>{i.product?.name} × {i.quantity}{i.selectedSize?` · ${i.selectedSize}`:""}</span><b>{money(i.product?.price*i.quantity)}</b></div>)}<div><span>Subtotal</span><b>{money(subtotal)}</b></div><div><span>Delivery</span><b>{fee?money(fee):"Free"}</b></div><div className="summary-total"><span>Total</span><b>{money(subtotal+fee)}</b></div></aside></div></main>;
+=======
+  return <main className="page checkout-page"><div className="page-title"><div className="eyebrow">ALMOST YOURS</div><h1>Check <em>out.</em></h1><p>Confirm where your finds should arrive.</p></div><div className="checkout-layout"><form className="address-form" onSubmit={submit}><h2>Delivery address</h2><p>We need a complete address to estimate delivery.</p><label>Street address<input required value={address.street} onChange={e=>setAddress({...address,street:e.target.value})} placeholder="House number, street, area"/></label><div className="form-row"><label>City<input required value={address.city} onChange={e=>setAddress({...address,city:e.target.value})} placeholder="City"/></label><label>State<input required value={address.state} onChange={e=>setAddress({...address,state:e.target.value})}/></label></div><div className="form-row"><label>PIN / postal code<input required value={address.postalCode} onChange={e=>setAddress({...address,postalCode:e.target.value})} placeholder="Postal code"/></label><label>Country<input required value={address.country} onChange={e=>setAddress({...address,country:e.target.value})}/></label></div><label>Mobile number<input required inputMode="numeric" pattern="[6-9][0-9]{9}" maxLength={10} value={phone} onChange={e=>setPhone(e.target.value.replace(/\D/g,""))} placeholder="10-digit mobile number"/></label><h2 className="pay-title">Payment method</h2><div className="pay-options"><label className={method==="online"?"pay-option on":"pay-option"}><input type="radio" name="pay" checked={method==="online"} onChange={()=>setMethod("online")}/><span><b>Pay online</b><small>UPI, card or net banking</small></span></label><label className={method==="cod"?"pay-option on":"pay-option"}><input type="radio" name="pay" checked={method==="cod"} onChange={()=>setMethod("cod")}/><span><b>Cash on delivery</b><small>Pay in cash when your order arrives</small></span></label></div>{error&&<div className="form-error">{error}</div>}<button className="button button-dark full" disabled={busy||!cart.length}>{busy?(method==="cod"?"Placing order…":"Opening payment…"):method==="cod"?`Place order · ${money(subtotal+fee)} on delivery`:`Pay ${money(subtotal+fee)} securely`}</button><small className="demo-warning">{method==="cod"?"Please keep the exact amount ready when your order arrives.":"You will pay on Cashfree's secure page with UPI, card or net banking."}</small></form><aside className="summary-card"><h3>Your order</h3>{cart.map((i,idx)=><div className="checkout-line" key={idx}><img src={i.product?.images?.[0]} alt=""/><span>{i.product?.name} × {i.quantity}{i.selectedSize?` · ${i.selectedSize}`:""}</span><b>{money(i.product?.price*i.quantity)}</b></div>)}<div><span>Subtotal</span><b>{money(subtotal)}</b></div><div><span>Delivery</span><b>{fee?money(fee):"Free"}</b></div><div className="summary-total"><span>Total</span><b>{money(subtotal+fee)}</b></div></aside></div></main>;
+>>>>>>> 1d03b75 (All Done)
 }
 
 function ProfilePage({ customer, setCustomer, signOut }) {
@@ -335,13 +367,22 @@ function OrderPage({ customer }) {
     api(`/orders/${id}`).then(d => setOrder(d.order)).catch(e => setError(e.message));}, [id]);
 
   const handleCancelOrder = async () => {
+<<<<<<< HEAD
     const confirmCancel = window.confirm("Are you sure you want to cancel this order?");
+=======
+    const confirmCancel = window.confirm(order?.paymentStatus === "Paid" ? "Cancel this order? Your payment will be refunded." : "Are you sure you want to cancel this order?");
+>>>>>>> 1d03b75 (All Done)
 
     if (!confirmCancel) return;
 
     try {
+<<<<<<< HEAD
       await api(`/orders/${id}`, {method: "DELETE"});
       alert("Order cancelled successfully!");
+=======
+      const data = await api(`/orders/${id}`, {method: "DELETE"});
+      alert(data.message || "Order cancelled successfully!");
+>>>>>>> 1d03b75 (All Done)
       navigate("/orders");
     } catch (error) {
       console.error("Cancel order error:", error);
@@ -349,6 +390,21 @@ function OrderPage({ customer }) {
     }
   };
 
+<<<<<<< HEAD
+=======
+  const handleReturn = async () => {
+    const reason = window.prompt("Why do you want to return this order?");
+    if (!reason || !reason.trim()) return;
+    try {
+      const data = await api(`/orders/${id}/return`, { method: "POST", body: JSON.stringify({ reason }) });
+      setOrder(data.order);
+      alert(data.message);
+    } catch (error) {
+      alert(error.message || "Unable to request a return.");
+    }
+  };
+
+>>>>>>> 1d03b75 (All Done)
   if (!customer) {
     return (
       <main className="page">
@@ -379,7 +435,11 @@ function OrderPage({ customer }) {
           Placed on {fmtDate(order.orderedAt)} · {order._id}
         </p>
 
+<<<<<<< HEAD
         {["OrderPlaced", "Processing"].includes(order.status) && order.paymentStatus !== "Paid" && !(order.paymentStatus === "Pending" && order.gatewayOrderId) && (
+=======
+        {["OrderPlaced", "Processing"].includes(order.status) && !(order.paymentStatus === "Pending" && order.gatewayOrderId) && !(order.estimatedDeliveryAt && new Date(order.estimatedDeliveryAt) <= new Date()) && (
+>>>>>>> 1d03b75 (All Done)
           <button
             className="button button-dark"
             onClick={handleCancelOrder}
@@ -387,6 +447,18 @@ function OrderPage({ customer }) {
             Cancel Order
           </button>
         )}
+<<<<<<< HEAD
+=======
+        {order.status === "Delivered" && order.deliveredAt && (!order.returnStatus || order.returnStatus === "None") && (() => {
+          const lastDay = new Date(new Date(order.deliveredAt).getTime() + 7 * 24 * 60 * 60 * 1000);
+          return new Date() <= lastDay
+            ? <><button className="button button-dark" onClick={handleReturn}>Return order</button><p>You can return this order until {fmtDate(lastDay)}.</p></>
+            : <p>The 7-day return period ended on {fmtDate(lastDay)}.</p>;
+        })()}
+        {order.returnStatus && order.returnStatus !== "None" && (
+          <p>Return: <b>{{ Requested: "Requested. We will contact you about pickup.", Approved: order.paymentMethod === "COD" ? "Approved. Your refund will be sent to you soon." : "Approved.", Rejected: "Rejected. Please contact support.", Refunded: "Refunded. It can take a few working days to reach you." }[order.returnStatus]}</b></p>
+        )}
+>>>>>>> 1d03b75 (All Done)
       </div>
 
       <div className="order-detail-layout">
@@ -430,7 +502,11 @@ function OrderPage({ customer }) {
           </div>
           <div>
             <span>Payment</span>
+<<<<<<< HEAD
             <b>{order.paymentStatus}</b>
+=======
+            <b>{order.paymentMethod === "COD" ? "Cash on delivery" : order.paymentMethod === "Cashfree" ? `Online · ${order.paymentStatus}` : order.paymentStatus}</b>
+>>>>>>> 1d03b75 (All Done)
           </div>
           <div className="summary-total">
             <span>Total</span>
