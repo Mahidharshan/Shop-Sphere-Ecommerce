@@ -22,8 +22,8 @@ const orderSchema = new mongoose.Schema({
   deliveryFee: Number,
   totalAmount: Number,
   currency: { type: String, default: "INR" },
-  status: { type: String, enum: ["OrderPlaced","Processing", "Shipped", "Out for Delivery", "Delivered", "Cancelled"], default: "OrderPlaced" },
-  paymentStatus: { type: String, enum: ["Demo - not paid", "Pending", "Paid", "Failed"], default: "Demo - not paid" },
+  status: { type: String, enum: ["OrderPlaced","Processing", "Shipped", "Out for Delivery", "Delivered", "Cancelled", "Returned"], default: "OrderPlaced" },
+  paymentStatus: { type: String, enum: ["Demo - not paid", "Pending", "Paid", "Failed", "Pay on Delivery", "Refund Initiated", "Refunded"], default: "Demo - not paid" },
   paymentMethod: { type: String, default: "Demo" },
   contactPhone: { type: String, default: "" }, // mobile number given at checkout (needed for delivery)
   gatewayOrderId: { type: String, index: true }, // Cashfree order id (ss_<order id>)
