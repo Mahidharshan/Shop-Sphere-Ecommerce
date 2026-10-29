@@ -449,7 +449,7 @@ function OrderPage({ customer }) {
           <h3>Delivery & payment</h3>
           <div>
             <span>Status</span>
-           <b>{o.paymentStatus === "Pending" && o.gatewayOrderId ? "Awaiting payment" : o.status}</b>
+           <b>{order.paymentStatus === "Pending" && order.gatewayOrderId ? "Awaiting payment" : order.status}</b>
           </div>
           <div>
             <span>Estimated delivery</span>
