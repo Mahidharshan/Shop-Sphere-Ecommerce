@@ -21,6 +21,9 @@ const app = express();
 app.set("trust proxy", 1); // needed on Render so secure cookies work behind the proxy
 const port = process.env.PORT || 5000;
 
+// Render always sets RENDER=true, so the cookie is correct even if NODE_ENV was forgotten.
+const isProduction = process.env.NODE_ENV === "production" || Boolean(process.env.RENDER);
+
 const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
   .split(",")
   .map(o => o.trim().replace(/\/$/, ""))
@@ -49,11 +52,12 @@ app.use(session({
   secret: process.env.SESSION_SECRET || "development-only-change-this-secret",
   resave: false,
   saveUninitialized: false,
+  proxy: true,
   store: process.env.MONGODB_URI ? MongoStore.create({ mongoUrl: process.env.MONGODB_URI, collectionName: "sessions" }) : undefined,
   cookie: {
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction,
     maxAge: 1000 * 60 * 60 * 24 * 7
   }
 }));
